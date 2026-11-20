@@ -15,7 +15,7 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Film Magic – Sistema de rentas</title>
 <style>
-
+/* Estilos de la aplicación Film Magic */
 *{
   box-sizing:border-box;
 }
@@ -256,11 +256,12 @@ small{
   color:#6b7280;
   font-weight:400;
 }
+
+.portada { width: 44px; height: 40px; object-fit: cover; border-radius: 6px; display: block; }
 </style></head><body>
 <div id="app"></div>
 <script>
 "use strict";
-
 
 
 /* =====================================================================
@@ -322,9 +323,10 @@ class Articulo {
     #titulo;
     #precioRenta;
     #disponible;
+    #imagen; // URL de la portada (opcional)
 
     /** Constructor: inicializa los datos del artículo. */
-    constructor(codigo, titulo, precioRenta, disponible = true) {
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
         // Abstracción: no se puede crear un "Articulo" genérico, solo sus hijas
         if (new.target === Articulo) {
             throw new TypeError("Articulo es abstracta: use Video, VideoJuego o CintaVideoJuego.");
@@ -333,6 +335,7 @@ class Articulo {
         this.#titulo = titulo;
         this.#precioRenta = precioRenta;
         this.#disponible = disponible;
+        this.#imagen = Articulo.imagenValida(imagen) ? imagen : "";
     }
 
     // ---------- Métodos "abstractos": cada subclase los define a su manera ----------
@@ -358,25 +361,48 @@ class Articulo {
     set precioRenta(valor) { this.#precioRenta = valor; }
     get disponible() { return this.#disponible; }
     set disponible(valor) { this.#disponible = Boolean(valor); }
+    get imagen() { return this.#imagen; }
+
+    /** Imagen a mostrar: la del artículo si tiene, o una ilustración ligera según el tipo. */
+    get imagenMostrar() {
+        return this.#imagen || Articulo.ilustracion(this.claveTipo);
+    }
+
+    /** Solo se aceptan rutas relativas o direcciones http(s); así se evita código malicioso en el enlace. */
+    static imagenValida(url) {
+        return typeof url === "string" && /^(https?:\/\/|img\/)[^\s"'<>]+$/i.test(url);
+    }
+
+    /** Ilustración por defecto (SVG dentro del código, no pesa nada). */
+    static ilustracion(claveTipo) {
+        const fondos = { VIDEO: "#1e3a8a", VIDEOJUEGO: "#7c3aed", CINTA: "#b45309" };
+        const dibujos = {
+            VIDEO: '<rect x="14" y="22" width="52" height="34" rx="4" fill="#fff"/><path d="M34 31l16 8-16 8z" fill="#1e3a8a"/><rect x="14" y="14" width="52" height="8" fill="#93c5fd"/>',
+            VIDEOJUEGO: '<rect x="12" y="26" width="56" height="28" rx="14" fill="#fff"/><rect x="24" y="35" width="12" height="4" fill="#7c3aed"/><rect x="28" y="31" width="4" height="12" fill="#7c3aed"/><circle cx="50" cy="35" r="3" fill="#7c3aed"/><circle cx="57" cy="41" r="3" fill="#7c3aed"/>',
+            CINTA: '<rect x="20" y="14" width="40" height="46" rx="4" fill="#fff"/><rect x="26" y="20" width="28" height="18" fill="#b45309"/><rect x="30" y="46" width="20" height="8" fill="#fcd34d"/>'
+        };
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72"><rect width="80" height="72" rx="8" fill="${fondos[claveTipo] || "#475569"}"/>${dibujos[claveTipo] || ""}</svg>`;
+        return "data:image/svg+xml," + encodeURIComponent(svg);
+    }
 
     // ---------- Persistencia ----------
     toJSON() {
         return { tipo: this.claveTipo, codigo: this.#codigo, titulo: this.#titulo,
-                 precio: this.#precioRenta, disponible: this.#disponible };
+                 precio: this.#precioRenta, disponible: this.#disponible, imagen: this.#imagen };
     }
 
     /** Método estático (fábrica): crea el tipo de artículo correcto a partir de su clave. */
-    static crear(claveTipo, codigo, titulo, precio, disponible = true) {
+    static crear(claveTipo, codigo, titulo, precio, disponible = true, imagen = "") {
         switch (claveTipo) {
-            case "VIDEO": return new Video(codigo, titulo, precio, disponible);
-            case "VIDEOJUEGO": return new VideoJuego(codigo, titulo, precio, disponible);
-            case "CINTA": return new CintaVideoJuego(codigo, titulo, precio, disponible);
+            case "VIDEO": return new Video(codigo, titulo, precio, disponible, imagen);
+            case "VIDEOJUEGO": return new VideoJuego(codigo, titulo, precio, disponible, imagen);
+            case "CINTA": return new CintaVideoJuego(codigo, titulo, precio, disponible, imagen);
             default: throw new Error("Tipo de artículo desconocido: " + claveTipo);
         }
     }
 
     static desdeObjeto(o) {
-        return Articulo.crear(o.tipo, o.codigo, o.titulo, o.precio, o.disponible);
+        return Articulo.crear(o.tipo, o.codigo, o.titulo, o.precio, o.disponible, o.imagen);
     }
 }
 
@@ -384,8 +410,8 @@ class Articulo {
 
 /** Película o video rentable. */
 class Video extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible); // constructor de la clase base
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen); // constructor de la clase base
     }
     get tipo() { return "Video"; }
     get claveTipo() { return "VIDEO"; }
@@ -395,8 +421,8 @@ class Video extends Articulo {
 
 /** Video juego rentable (disco o cartucho). */
 class VideoJuego extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible);
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen);
     }
     get tipo() { return "Video juego"; }
     get claveTipo() { return "VIDEOJUEGO"; }
@@ -406,8 +432,8 @@ class VideoJuego extends Articulo {
 
 /** Cinta de video juego rentable. */
 class CintaVideoJuego extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible);
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen);
     }
     get tipo() { return "Cinta VJ"; }
     get claveTipo() { return "CINTA"; }
@@ -559,8 +585,7 @@ class Premio {
     get tieneCertificado() { return this.#certificado; }
 }
 
-
-
+"use strict";
 
 /* =====================================================================
    ALMACEN
@@ -844,8 +869,7 @@ class FilmMagic {
     }
 }
 
-
-
+"use strict";
 
 /* =====================================================================
    INTERFAZ - Film Magic
@@ -986,7 +1010,7 @@ function pantallaCliente(params) {
 }
 
 function pantallaArticulos() {
-    const filas = sistema.articulos.map(a => `<tr><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
+    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
         <td>${dinero(a.precioRenta)}</td><td>${a.diasRenta}</td><td>${dinero(a.tarifaAtrasoDiaria)}</td>
         <td>${a.disponible ? '<span class="pill verde">Disponible</span>' : '<span class="pill amarillo">Rentado</span>'}</td></tr>`).join("");
     return pagina("Artículos", "/articulos", `
@@ -994,9 +1018,10 @@ function pantallaArticulos() {
             <label>Tipo<select name="tipo"><option value="VIDEO">Video</option><option value="VIDEOJUEGO">Video juego</option><option value="CINTA">Cinta de video juego</option></select></label>
             ${campo("codigo", "Código", "V010")}${campo("titulo", "Título", "Título del artículo")}
             <label>Precio de renta (RD$)<input name="precio" type="number" step="0.01" min="1" placeholder="150" required></label>
+            <label>Imagen (opcional: dirección https://… o img/archivo.jpg)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
             <button class="btn">Guardar artículo</button></form></div>
-        <div class="panel"><h2>Inventario</h2><table><tr><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
-        ${filas || '<tr><td colspan="7">No hay artículos registrados.</td></tr>'}</table></div>`);
+        <div class="panel"><h2>Inventario</h2><table><tr><th>Imagen</th><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
+        ${filas || '<tr><td colspan="8">No hay artículos registrados.</td></tr>'}</table></div>`);
 }
 
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
@@ -1040,7 +1065,7 @@ function pantallaDevolver() {
     }).join("");
     return pagina("Devolver", "/devolver", `<div class="panel"><h2>Artículos rentados actualmente</h2>
         <table><tr><th>Renta</th><th>Artículo</th><th>Cliente</th><th>Rentado</th><th>Vence</th><th>Estado</th><th></th></tr>
-        ${filas || '<tr><td colspan="7">No hay artículos rentados en este momento.</td></tr>'}</table>
+        ${filas || '<tr><td colspan="8">No hay artículos rentados en este momento.</td></tr>'}</table>
         <p class="nota">Fecha del sistema: <b>${sistema.fechaSistema}</b>. El atraso se calcula contra esta fecha.</p></div>`);
 }
 
@@ -1125,7 +1150,7 @@ const acciones = {
         const codigo = limpiar(d.codigo).toUpperCase(), titulo = limpiar(d.titulo), precio = Number(d.precio);
         if (!codigo || !titulo || !(precio > 0)) {
             avisar("Complete todos los campos; el precio debe ser mayor que cero.", false);
-        } else if (sistema.registrarArticulo(Articulo.crear(d.tipo, codigo, titulo, precio))) {
+        } else if (sistema.registrarArticulo(Articulo.crear(d.tipo, codigo, titulo, precio, true, (d.imagen || "").trim()))) {
             guardar();
             avisar(`Artículo ${codigo} registrado correctamente.`, true);
         } else {
@@ -1240,6 +1265,7 @@ document.addEventListener("submit", (evento) => {
 
 window.addEventListener("hashchange", dibujar);
 dibujar();
+
 
 </script>
 </body></html>

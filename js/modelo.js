@@ -67,9 +67,10 @@ class Articulo {
     #titulo;
     #precioRenta;
     #disponible;
+    #imagen; // URL de la portada (opcional)
 
     /** Constructor: inicializa los datos del artículo. */
-    constructor(codigo, titulo, precioRenta, disponible = true) {
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
         // Abstracción: no se puede crear un "Articulo" genérico, solo sus hijas
         if (new.target === Articulo) {
             throw new TypeError("Articulo es abstracta: use Video, VideoJuego o CintaVideoJuego.");
@@ -78,6 +79,7 @@ class Articulo {
         this.#titulo = titulo;
         this.#precioRenta = precioRenta;
         this.#disponible = disponible;
+        this.#imagen = Articulo.imagenValida(imagen) ? imagen : "";
     }
 
     // ---------- Métodos "abstractos": cada subclase los define a su manera ----------
@@ -103,25 +105,48 @@ class Articulo {
     set precioRenta(valor) { this.#precioRenta = valor; }
     get disponible() { return this.#disponible; }
     set disponible(valor) { this.#disponible = Boolean(valor); }
+    get imagen() { return this.#imagen; }
+
+    /** Imagen a mostrar: la del artículo si tiene, o una ilustración ligera según el tipo. */
+    get imagenMostrar() {
+        return this.#imagen || Articulo.ilustracion(this.claveTipo);
+    }
+
+    /** Solo se aceptan rutas relativas o direcciones http(s); así se evita código malicioso en el enlace. */
+    static imagenValida(url) {
+        return typeof url === "string" && /^(https?:\/\/|img\/)[^\s"'<>]+$/i.test(url);
+    }
+
+    /** Ilustración por defecto (SVG dentro del código, no pesa nada). */
+    static ilustracion(claveTipo) {
+        const fondos = { VIDEO: "#1e3a8a", VIDEOJUEGO: "#7c3aed", CINTA: "#b45309" };
+        const dibujos = {
+            VIDEO: '<rect x="14" y="22" width="52" height="34" rx="4" fill="#fff"/><path d="M34 31l16 8-16 8z" fill="#1e3a8a"/><rect x="14" y="14" width="52" height="8" fill="#93c5fd"/>',
+            VIDEOJUEGO: '<rect x="12" y="26" width="56" height="28" rx="14" fill="#fff"/><rect x="24" y="35" width="12" height="4" fill="#7c3aed"/><rect x="28" y="31" width="4" height="12" fill="#7c3aed"/><circle cx="50" cy="35" r="3" fill="#7c3aed"/><circle cx="57" cy="41" r="3" fill="#7c3aed"/>',
+            CINTA: '<rect x="20" y="14" width="40" height="46" rx="4" fill="#fff"/><rect x="26" y="20" width="28" height="18" fill="#b45309"/><rect x="30" y="46" width="20" height="8" fill="#fcd34d"/>'
+        };
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72"><rect width="80" height="72" rx="8" fill="${fondos[claveTipo] || "#475569"}"/>${dibujos[claveTipo] || ""}</svg>`;
+        return "data:image/svg+xml," + encodeURIComponent(svg);
+    }
 
     // ---------- Persistencia ----------
     toJSON() {
         return { tipo: this.claveTipo, codigo: this.#codigo, titulo: this.#titulo,
-                 precio: this.#precioRenta, disponible: this.#disponible };
+                 precio: this.#precioRenta, disponible: this.#disponible, imagen: this.#imagen };
     }
 
     /** Método estático (fábrica): crea el tipo de artículo correcto a partir de su clave. */
-    static crear(claveTipo, codigo, titulo, precio, disponible = true) {
+    static crear(claveTipo, codigo, titulo, precio, disponible = true, imagen = "") {
         switch (claveTipo) {
-            case "VIDEO": return new Video(codigo, titulo, precio, disponible);
-            case "VIDEOJUEGO": return new VideoJuego(codigo, titulo, precio, disponible);
-            case "CINTA": return new CintaVideoJuego(codigo, titulo, precio, disponible);
+            case "VIDEO": return new Video(codigo, titulo, precio, disponible, imagen);
+            case "VIDEOJUEGO": return new VideoJuego(codigo, titulo, precio, disponible, imagen);
+            case "CINTA": return new CintaVideoJuego(codigo, titulo, precio, disponible, imagen);
             default: throw new Error("Tipo de artículo desconocido: " + claveTipo);
         }
     }
 
     static desdeObjeto(o) {
-        return Articulo.crear(o.tipo, o.codigo, o.titulo, o.precio, o.disponible);
+        return Articulo.crear(o.tipo, o.codigo, o.titulo, o.precio, o.disponible, o.imagen);
     }
 }
 
@@ -129,8 +154,8 @@ class Articulo {
 
 /** Película o video rentable. */
 class Video extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible); // constructor de la clase base
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen); // constructor de la clase base
     }
     get tipo() { return "Video"; }
     get claveTipo() { return "VIDEO"; }
@@ -140,8 +165,8 @@ class Video extends Articulo {
 
 /** Video juego rentable (disco o cartucho). */
 class VideoJuego extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible);
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen);
     }
     get tipo() { return "Video juego"; }
     get claveTipo() { return "VIDEOJUEGO"; }
@@ -151,8 +176,8 @@ class VideoJuego extends Articulo {
 
 /** Cinta de video juego rentable. */
 class CintaVideoJuego extends Articulo {
-    constructor(codigo, titulo, precioRenta, disponible = true) {
-        super(codigo, titulo, precioRenta, disponible);
+    constructor(codigo, titulo, precioRenta, disponible = true, imagen = "") {
+        super(codigo, titulo, precioRenta, disponible, imagen);
     }
     get tipo() { return "Cinta VJ"; }
     get claveTipo() { return "CINTA"; }
