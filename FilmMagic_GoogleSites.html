@@ -4,7 +4,8 @@
   Matrícula: PENDIENTE
   Asignatura: Programación
   Sección: 7 (INF514-7)
-  Hora de Entrega: 2:17 pm
+  Fecha de Entrega: 27 de noviembre de 2026
+  Hora de Entrega: 2:17 p. m. (hora límite)
   Profesor: Julio Castro Ortiz
 
   Versión de UN SOLO ARCHIVO (HTML + CSS + JavaScript juntos), pensada para
@@ -257,6 +258,12 @@ small{
 }
 
 .portada { width: 44px; height: 40px; object-fit: cover; border-radius: 6px; display: block; }
+
+.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.tarjeta { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
+.tarjeta img { width: 100%; max-width: 110px; height: auto; border-radius: 8px; }
+.tarjeta small { color: #64748b; }
+.tarjeta.ocupada { opacity: .6; }
 </style></head><body>
 <div id="app"></div>
 <script>
@@ -1024,6 +1031,22 @@ function pantallaArticulos() {
 }
 
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
+/** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
+function catalogo(codigoCliente) {
+    const tarjetas = sistema.articulos.map(a => `<div class="tarjeta${a.disponible ? "" : " ocupada"}">
+        <img src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+        <strong>${esc(a.titulo)}</strong>
+        <small>${esc(a.tipo)} · ${esc(a.codigo)}</small>
+        <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>
+        ${a.disponible
+            ? (codigoCliente
+                ? `<form data-accion="rentar"><input type="hidden" name="cliente" value="${esc(codigoCliente)}"><input type="hidden" name="articulo" value="${esc(a.codigo)}"><button class="btn peq">Elegir este</button></form>`
+                : '<span class="pill verde">Disponible</span>')
+            : '<span class="pill amarillo">Rentado</span>'}
+    </div>`).join("");
+    return `<div class="panel"><h2>Catálogo de artículos</h2><div class="catalogo">${tarjetas || "No hay artículos registrados."}</div></div>`;
+}
+
 function pantallaRentar(params) {
     const codigo = (params.cliente || "").trim();
     const c = codigo ? sistema.buscarCliente(codigo) : null;
@@ -1046,7 +1069,11 @@ function pantallaRentar(params) {
                 <input type="hidden" name="cliente" value="${esc(c.codigo)}">
                 <label>Artículo disponible<select name="articulo">${opciones}</select></label>
                 <button class="btn">Rentar</button></form></div>`;
+            h += catalogo(c.codigo);
         }
+    }
+    if (!c) {
+        h += catalogo("");
     }
     return pagina("Rentar", "/rentar", h);
 }

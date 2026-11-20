@@ -162,6 +162,22 @@ function pantallaArticulos() {
 }
 
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
+/** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
+function catalogo(codigoCliente) {
+    const tarjetas = sistema.articulos.map(a => `<div class="tarjeta${a.disponible ? "" : " ocupada"}">
+        <img src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+        <strong>${esc(a.titulo)}</strong>
+        <small>${esc(a.tipo)} · ${esc(a.codigo)}</small>
+        <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>
+        ${a.disponible
+            ? (codigoCliente
+                ? `<form data-accion="rentar"><input type="hidden" name="cliente" value="${esc(codigoCliente)}"><input type="hidden" name="articulo" value="${esc(a.codigo)}"><button class="btn peq">Elegir este</button></form>`
+                : '<span class="pill verde">Disponible</span>')
+            : '<span class="pill amarillo">Rentado</span>'}
+    </div>`).join("");
+    return `<div class="panel"><h2>Catálogo de artículos</h2><div class="catalogo">${tarjetas || "No hay artículos registrados."}</div></div>`;
+}
+
 function pantallaRentar(params) {
     const codigo = (params.cliente || "").trim();
     const c = codigo ? sistema.buscarCliente(codigo) : null;
@@ -184,7 +200,11 @@ function pantallaRentar(params) {
                 <input type="hidden" name="cliente" value="${esc(c.codigo)}">
                 <label>Artículo disponible<select name="articulo">${opciones}</select></label>
                 <button class="btn">Rentar</button></form></div>`;
+            h += catalogo(c.codigo);
         }
+    }
+    if (!c) {
+        h += catalogo("");
     }
     return pagina("Rentar", "/rentar", h);
 }
