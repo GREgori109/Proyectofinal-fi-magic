@@ -147,7 +147,7 @@ function pantallaCliente(params) {
 }
 
 function pantallaArticulos() {
-    const filas = sistema.articulos.map(a => `<tr><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
+    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
         <td>${dinero(a.precioRenta)}</td><td>${a.diasRenta}</td><td>${dinero(a.tarifaAtrasoDiaria)}</td>
         <td>${a.disponible ? '<span class="pill verde">Disponible</span>' : '<span class="pill amarillo">Rentado</span>'}</td></tr>`).join("");
     return pagina("Artículos", "/articulos", `
@@ -155,9 +155,10 @@ function pantallaArticulos() {
             <label>Tipo<select name="tipo"><option value="VIDEO">Video</option><option value="VIDEOJUEGO">Video juego</option><option value="CINTA">Cinta de video juego</option></select></label>
             ${campo("codigo", "Código", "V010")}${campo("titulo", "Título", "Título del artículo")}
             <label>Precio de renta (RD$)<input name="precio" type="number" step="0.01" min="1" placeholder="150" required></label>
+            <label>Imagen (opcional: dirección https://… o img/archivo.jpg)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
             <button class="btn">Guardar artículo</button></form></div>
-        <div class="panel"><h2>Inventario</h2><table><tr><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
-        ${filas || '<tr><td colspan="7">No hay artículos registrados.</td></tr>'}</table></div>`);
+        <div class="panel"><h2>Inventario</h2><table><tr><th>Imagen</th><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
+        ${filas || '<tr><td colspan="8">No hay artículos registrados.</td></tr>'}</table></div>`);
 }
 
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
@@ -201,7 +202,7 @@ function pantallaDevolver() {
     }).join("");
     return pagina("Devolver", "/devolver", `<div class="panel"><h2>Artículos rentados actualmente</h2>
         <table><tr><th>Renta</th><th>Artículo</th><th>Cliente</th><th>Rentado</th><th>Vence</th><th>Estado</th><th></th></tr>
-        ${filas || '<tr><td colspan="7">No hay artículos rentados en este momento.</td></tr>'}</table>
+        ${filas || '<tr><td colspan="8">No hay artículos rentados en este momento.</td></tr>'}</table>
         <p class="nota">Fecha del sistema: <b>${sistema.fechaSistema}</b>. El atraso se calcula contra esta fecha.</p></div>`);
 }
 
@@ -286,7 +287,7 @@ const acciones = {
         const codigo = limpiar(d.codigo).toUpperCase(), titulo = limpiar(d.titulo), precio = Number(d.precio);
         if (!codigo || !titulo || !(precio > 0)) {
             avisar("Complete todos los campos; el precio debe ser mayor que cero.", false);
-        } else if (sistema.registrarArticulo(Articulo.crear(d.tipo, codigo, titulo, precio))) {
+        } else if (sistema.registrarArticulo(Articulo.crear(d.tipo, codigo, titulo, precio, true, (d.imagen || "").trim()))) {
             guardar();
             avisar(`Artículo ${codigo} registrado correctamente.`, true);
         } else {
