@@ -250,8 +250,12 @@ small{
 
 .portada { width: 44px; height: 40px; object-fit: cover; border-radius: 6px; display: block; }
 
-.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-.tarjeta { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-.tarjeta img { width: 100%; max-width: 110px; height: auto; border-radius: 8px; }
-.tarjeta small { color: #64748b; }
-.tarjeta.ocupada { opacity: .6; }
+.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.item { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
+.item img { width: 100%; border-radius: 8px; aspect-ratio: 160 / 220; object-fit: cover; }
+.item small { color: #64748b; }
+.item.ocupada { opacity: .65; }
+.item.oculto { display: none; }
+.filtros { display: flex; gap: 8px; margin-top: 10px; }
+.btn.activo { background: #1e3a8a; color: #fff; }
+#buscar { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }

@@ -275,6 +275,13 @@ class FilmMagic {
         this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250));
         this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250));
         this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250));
+        // Más títulos para el catálogo (sin historial de rentas)
+        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150));
+        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150));
+        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175));
+        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100));
+        this.registrarArticulo(new Video("V005", "Joker", 100));
+        this.registrarArticulo(new Video("V006", "Interstelar", 100));
 
         const anio = this.#fechaSistema.slice(0, 4);
         const inicio = `${anio}-01-02`;

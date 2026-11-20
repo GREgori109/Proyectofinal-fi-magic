@@ -259,11 +259,15 @@ small{
 
 .portada { width: 44px; height: 40px; object-fit: cover; border-radius: 6px; display: block; }
 
-.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-.tarjeta { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-.tarjeta img { width: 100%; max-width: 110px; height: auto; border-radius: 8px; }
-.tarjeta small { color: #64748b; }
-.tarjeta.ocupada { opacity: .6; }
+.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.item { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
+.item img { width: 100%; border-radius: 8px; aspect-ratio: 160 / 220; object-fit: cover; }
+.item small { color: #64748b; }
+.item.ocupada { opacity: .65; }
+.item.oculto { display: none; }
+.filtros { display: flex; gap: 8px; margin-top: 10px; }
+.btn.activo { background: #1e3a8a; color: #fff; }
+#buscar { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
 </style></head><body>
 <div id="app"></div>
 <script>
@@ -368,6 +372,15 @@ class Articulo {
     get disponible() { return this.#disponible; }
     set disponible(valor) { this.#disponible = Boolean(valor); }
     get imagen() { return this.#imagen; }
+    set imagen(url) { this.#imagen = Articulo.imagenValida(url) ? url : ""; }
+
+    /** Categoría para el catálogo: las películas por un lado y los videojuegos (disco o cinta) por otro. */
+    get categoria() { return this.claveTipo === "VIDEO" ? "Película" : "Videojuego"; }
+
+    /** Portada para las tarjetas: la imagen del artículo o una portada generada con el título (SVG, no pesa). */
+    get portada() {
+        return this.#imagen || Articulo.portadaGenerada(this.#titulo, this.categoria, this.claveTipo);
+    }
 
     /** Imagen a mostrar: la del artículo si tiene, o una ilustración ligera según el tipo. */
     get imagenMostrar() {
@@ -377,6 +390,29 @@ class Articulo {
     /** Solo se aceptan rutas relativas o direcciones http(s); así se evita código malicioso en el enlace. */
     static imagenValida(url) {
         return typeof url === "string" && /^(https?:\/\/|img\/)[^\s"'<>]+$/i.test(url);
+    }
+
+    /** Portada generada: fondo de color según el tipo, categoría y título en hasta 3 líneas. */
+    static portadaGenerada(titulo, categoria, claveTipo) {
+        const colores = { VIDEO: "#be4a5c", VIDEOJUEGO: "#4a8fbe", CINTA: "#be9a4a" };
+        const color = colores[claveTipo] || "#64748b";
+        const lineas = [];
+        let actual = "";
+        for (const palabra of String(titulo).split(/\s+/)) {
+            if ((actual + " " + palabra).trim().length > 13 && actual) { lineas.push(actual); actual = palabra; }
+            else { actual = (actual + " " + palabra).trim(); }
+        }
+        lineas.push(actual);
+        const texto = lineas.slice(0, 3).map((l, i) =>
+            `<text x="80" y="${150 - (Math.min(lineas.length, 3) - 1) * 12 + i * 24}" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="${l.length > 11 ? 16 : 19}" fill="#fff">${esc(l.length > 15 ? l.slice(0, 14) + "…" : l)}</text>`).join("");
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 220"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="${color}" stop-opacity=".55"/></linearGradient></defs>`
+            + `<rect width="160" height="220" fill="url(#g)"/><rect x="10" y="10" width="140" height="200" rx="10" fill="none" stroke="${color}" stroke-opacity=".7"/>`
+            + `<circle cx="125" cy="45" r="34" fill="${color}" fill-opacity=".25"/>`
+            + `<text x="80" y="38" text-anchor="middle" font-family="Arial" font-size="9" letter-spacing="2" fill="${color}">${esc(categoria.toUpperCase())}</text>`
+            + texto
+            + `<text x="80" y="188" text-anchor="middle" font-family="Arial" font-size="7" letter-spacing="1" fill="#cbd5e1">FILM MAGIC COLLECTION</text>`
+            + `<rect x="60" y="196" width="40" height="3" rx="2" fill="${color}"/></svg>`;
+        return "data:image/svg+xml," + encodeURIComponent(svg);
     }
 
     /** Ilustración por defecto (SVG dentro del código, no pesa nada). */
@@ -860,6 +896,13 @@ class FilmMagic {
         this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250));
         this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250));
         this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250));
+        // Más títulos para el catálogo (sin historial de rentas)
+        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150));
+        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150));
+        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175));
+        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100));
+        this.registrarArticulo(new Video("V005", "Joker", 100));
+        this.registrarArticulo(new Video("V006", "Interstelar", 100));
 
         const anio = this.#fechaSistema.slice(0, 4);
         const inicio = `${anio}-01-02`;
@@ -946,7 +989,7 @@ function fichaCliente(c) {
 }
 
 function pagina(titulo, activo, contenido) {
-    const menu = [["/inicio", "Inicio"], ["/clientes", "Clientes"], ["/articulos", "Artículos"], ["/rentar", "Rentar"],
+    const menu = [["/inicio", "Inicio"], ["/clientes", "Clientes"], ["/articulos", "Artículos"], ["/catalogo", "Catálogo"], ["/rentar", "Rentar"],
                   ["/devolver", "Devolver"], ["/premios", "Premios"], ["/sistema", "Fecha y datos"]];
     const mensaje = aviso ? `<div class="msg ${aviso.ok ? "ok" : "error"}">${esc(aviso.texto)}</div>` : "";
     aviso = null; // el mensaje se muestra una sola vez
@@ -1026,17 +1069,50 @@ function pantallaArticulos() {
             <label>Precio de renta (RD$)<input name="precio" type="number" step="0.01" min="1" placeholder="150" required></label>
             <label>Imagen (opcional: dirección https://… o img/archivo.jpg)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
             <button class="btn">Guardar artículo</button></form></div>
+        <div class="panel"><h2>Poner o cambiar la imagen de un artículo</h2><form data-accion="imagenArticulo" class="fila">
+            ${campo("codigo", "Código del artículo", "V001")}
+            <label>Link de la imagen (https://… o img/archivo.jpg; vacío = portada automática)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
+            <button class="btn">Guardar imagen</button></form></div>
         <div class="panel"><h2>Inventario</h2><table><tr><th>Imagen</th><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
         ${filas || '<tr><td colspan="8">No hay artículos registrados.</td></tr>'}</table></div>`);
 }
 
+/** Catálogo con buscador y filtros (se filtra en la propia página, sin recargar). */
+function pantallaCatalogo() {
+    return pagina("Catálogo", "/catalogo", `
+        <div class="panel"><input id="buscar" type="search" placeholder="Buscar título…" autocomplete="off">
+        <div class="filtros"><button class="btn sec peq activo" data-filtro="">Todos</button>
+        <button class="btn sec peq" data-filtro="Película">Películas</button>
+        <button class="btn sec peq" data-filtro="Videojuego">Videojuegos</button></div></div>
+        ${catalogo("")}`);
+}
+
+/** Muestra u oculta las tarjetas según el texto buscado y la categoría elegida. */
+let filtroCategoria = "";
+function aplicarFiltro() {
+    const texto = (document.getElementById("buscar")?.value || "").trim().toLowerCase();
+    document.querySelectorAll(".catalogo .item").forEach(t => {
+        const coincide = t.dataset.titulo.includes(texto) && (!filtroCategoria || t.dataset.cat === filtroCategoria);
+        t.classList.toggle("oculto", !coincide);
+    });
+}
+document.addEventListener("input", (e) => { if (e.target.id === "buscar") { aplicarFiltro(); } });
+document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-filtro]");
+    if (b) {
+        filtroCategoria = b.dataset.filtro;
+        document.querySelectorAll("[data-filtro]").forEach(x => x.classList.toggle("activo", x === b));
+        aplicarFiltro();
+    }
+});
+
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
 /** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
 function catalogo(codigoCliente) {
-    const tarjetas = sistema.articulos.map(a => `<div class="tarjeta${a.disponible ? "" : " ocupada"}">
-        <img src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+    const tarjetas = sistema.articulos.map(a => `<div class="item${a.disponible ? "" : " ocupada"}" data-titulo="${esc(a.titulo.toLowerCase())}" data-cat="${esc(a.categoria)}">
+        <img src="${esc(a.portada)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
         <strong>${esc(a.titulo)}</strong>
-        <small>${esc(a.tipo)} · ${esc(a.codigo)}</small>
+        <small>${esc(a.categoria)} · ${esc(a.codigo)}</small>
         <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>
         ${a.disponible
             ? (codigoCliente
@@ -1185,6 +1261,21 @@ const acciones = {
         ir("#/articulos");
     },
 
+    imagenArticulo(d) {
+        const art = sistema.buscarArticulo(limpiar(d.codigo));
+        const url = (d.imagen || "").trim();
+        if (!art) {
+            avisar("No existe un artículo con ese código.", false);
+        } else if (url && !Articulo.imagenValida(url)) {
+            avisar("El link debe empezar con https:// o con img/ y no tener espacios.", false);
+        } else {
+            art.imagen = url;
+            guardar();
+            avisar(url ? `Imagen de ${art.codigo} guardada.` : `${art.codigo} vuelve a usar la portada automática.`, true);
+        }
+        ir("#/articulos");
+    },
+
     buscarCliente(d) { ir(`#/cliente?codigo=${q(limpiar(d.codigo))}`); },
     buscarRentar(d) { ir(`#/rentar?cliente=${q(limpiar(d.cliente))}`); },
 
@@ -1270,7 +1361,7 @@ const acciones = {
 
 const pantallas = {
     "/inicio": pantallaInicio, "/clientes": pantallaClientes, "/cliente": pantallaCliente,
-    "/articulos": pantallaArticulos, "/rentar": pantallaRentar, "/devolver": pantallaDevolver,
+    "/articulos": pantallaArticulos, "/catalogo": pantallaCatalogo, "/rentar": pantallaRentar, "/devolver": pantallaDevolver,
     "/premios": pantallaPremios, "/sistema": pantallaSistema
 };
 

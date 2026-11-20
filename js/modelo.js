@@ -106,6 +106,15 @@ class Articulo {
     get disponible() { return this.#disponible; }
     set disponible(valor) { this.#disponible = Boolean(valor); }
     get imagen() { return this.#imagen; }
+    set imagen(url) { this.#imagen = Articulo.imagenValida(url) ? url : ""; }
+
+    /** Categoría para el catálogo: las películas por un lado y los videojuegos (disco o cinta) por otro. */
+    get categoria() { return this.claveTipo === "VIDEO" ? "Película" : "Videojuego"; }
+
+    /** Portada para las tarjetas: la imagen del artículo o una portada generada con el título (SVG, no pesa). */
+    get portada() {
+        return this.#imagen || Articulo.portadaGenerada(this.#titulo, this.categoria, this.claveTipo);
+    }
 
     /** Imagen a mostrar: la del artículo si tiene, o una ilustración ligera según el tipo. */
     get imagenMostrar() {
@@ -115,6 +124,29 @@ class Articulo {
     /** Solo se aceptan rutas relativas o direcciones http(s); así se evita código malicioso en el enlace. */
     static imagenValida(url) {
         return typeof url === "string" && /^(https?:\/\/|img\/)[^\s"'<>]+$/i.test(url);
+    }
+
+    /** Portada generada: fondo de color según el tipo, categoría y título en hasta 3 líneas. */
+    static portadaGenerada(titulo, categoria, claveTipo) {
+        const colores = { VIDEO: "#be4a5c", VIDEOJUEGO: "#4a8fbe", CINTA: "#be9a4a" };
+        const color = colores[claveTipo] || "#64748b";
+        const lineas = [];
+        let actual = "";
+        for (const palabra of String(titulo).split(/\s+/)) {
+            if ((actual + " " + palabra).trim().length > 13 && actual) { lineas.push(actual); actual = palabra; }
+            else { actual = (actual + " " + palabra).trim(); }
+        }
+        lineas.push(actual);
+        const texto = lineas.slice(0, 3).map((l, i) =>
+            `<text x="80" y="${150 - (Math.min(lineas.length, 3) - 1) * 12 + i * 24}" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="${l.length > 11 ? 16 : 19}" fill="#fff">${esc(l.length > 15 ? l.slice(0, 14) + "…" : l)}</text>`).join("");
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 220"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="${color}" stop-opacity=".55"/></linearGradient></defs>`
+            + `<rect width="160" height="220" fill="url(#g)"/><rect x="10" y="10" width="140" height="200" rx="10" fill="none" stroke="${color}" stroke-opacity=".7"/>`
+            + `<circle cx="125" cy="45" r="34" fill="${color}" fill-opacity=".25"/>`
+            + `<text x="80" y="38" text-anchor="middle" font-family="Arial" font-size="9" letter-spacing="2" fill="${color}">${esc(categoria.toUpperCase())}</text>`
+            + texto
+            + `<text x="80" y="188" text-anchor="middle" font-family="Arial" font-size="7" letter-spacing="1" fill="#cbd5e1">FILM MAGIC COLLECTION</text>`
+            + `<rect x="60" y="196" width="40" height="3" rx="2" fill="${color}"/></svg>`;
+        return "data:image/svg+xml," + encodeURIComponent(svg);
     }
 
     /** Ilustración por defecto (SVG dentro del código, no pesa nada). */

@@ -77,7 +77,7 @@ function fichaCliente(c) {
 }
 
 function pagina(titulo, activo, contenido) {
-    const menu = [["/inicio", "Inicio"], ["/clientes", "Clientes"], ["/articulos", "Artículos"], ["/rentar", "Rentar"],
+    const menu = [["/inicio", "Inicio"], ["/clientes", "Clientes"], ["/articulos", "Artículos"], ["/catalogo", "Catálogo"], ["/rentar", "Rentar"],
                   ["/devolver", "Devolver"], ["/premios", "Premios"], ["/sistema", "Fecha y datos"]];
     const mensaje = aviso ? `<div class="msg ${aviso.ok ? "ok" : "error"}">${esc(aviso.texto)}</div>` : "";
     aviso = null; // el mensaje se muestra una sola vez
@@ -157,17 +157,50 @@ function pantallaArticulos() {
             <label>Precio de renta (RD$)<input name="precio" type="number" step="0.01" min="1" placeholder="150" required></label>
             <label>Imagen (opcional: dirección https://… o img/archivo.jpg)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
             <button class="btn">Guardar artículo</button></form></div>
+        <div class="panel"><h2>Poner o cambiar la imagen de un artículo</h2><form data-accion="imagenArticulo" class="fila">
+            ${campo("codigo", "Código del artículo", "V001")}
+            <label>Link de la imagen (https://… o img/archivo.jpg; vacío = portada automática)<input name="imagen" type="text" placeholder="https://…/portada.jpg"></label>
+            <button class="btn">Guardar imagen</button></form></div>
         <div class="panel"><h2>Inventario</h2><table><tr><th>Imagen</th><th>Código</th><th>Tipo</th><th>Título</th><th>Precio</th><th>Días</th><th>Atraso/día</th><th>Estado</th></tr>
         ${filas || '<tr><td colspan="8">No hay artículos registrados.</td></tr>'}</table></div>`);
 }
 
+/** Catálogo con buscador y filtros (se filtra en la propia página, sin recargar). */
+function pantallaCatalogo() {
+    return pagina("Catálogo", "/catalogo", `
+        <div class="panel"><input id="buscar" type="search" placeholder="Buscar título…" autocomplete="off">
+        <div class="filtros"><button class="btn sec peq activo" data-filtro="">Todos</button>
+        <button class="btn sec peq" data-filtro="Película">Películas</button>
+        <button class="btn sec peq" data-filtro="Videojuego">Videojuegos</button></div></div>
+        ${catalogo("")}`);
+}
+
+/** Muestra u oculta las tarjetas según el texto buscado y la categoría elegida. */
+let filtroCategoria = "";
+function aplicarFiltro() {
+    const texto = (document.getElementById("buscar")?.value || "").trim().toLowerCase();
+    document.querySelectorAll(".catalogo .item").forEach(t => {
+        const coincide = t.dataset.titulo.includes(texto) && (!filtroCategoria || t.dataset.cat === filtroCategoria);
+        t.classList.toggle("oculto", !coincide);
+    });
+}
+document.addEventListener("input", (e) => { if (e.target.id === "buscar") { aplicarFiltro(); } });
+document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-filtro]");
+    if (b) {
+        filtroCategoria = b.dataset.filtro;
+        document.querySelectorAll("[data-filtro]").forEach(x => x.classList.toggle("activo", x === b));
+        aplicarFiltro();
+    }
+});
+
 /** Renta en dos pasos: 1) código del cliente (se muestran sus datos)  2) elegir el artículo. */
 /** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
 function catalogo(codigoCliente) {
-    const tarjetas = sistema.articulos.map(a => `<div class="tarjeta${a.disponible ? "" : " ocupada"}">
-        <img src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+    const tarjetas = sistema.articulos.map(a => `<div class="item${a.disponible ? "" : " ocupada"}" data-titulo="${esc(a.titulo.toLowerCase())}" data-cat="${esc(a.categoria)}">
+        <img src="${esc(a.portada)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
         <strong>${esc(a.titulo)}</strong>
-        <small>${esc(a.tipo)} · ${esc(a.codigo)}</small>
+        <small>${esc(a.categoria)} · ${esc(a.codigo)}</small>
         <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>
         ${a.disponible
             ? (codigoCliente
@@ -316,6 +349,21 @@ const acciones = {
         ir("#/articulos");
     },
 
+    imagenArticulo(d) {
+        const art = sistema.buscarArticulo(limpiar(d.codigo));
+        const url = (d.imagen || "").trim();
+        if (!art) {
+            avisar("No existe un artículo con ese código.", false);
+        } else if (url && !Articulo.imagenValida(url)) {
+            avisar("El link debe empezar con https:// o con img/ y no tener espacios.", false);
+        } else {
+            art.imagen = url;
+            guardar();
+            avisar(url ? `Imagen de ${art.codigo} guardada.` : `${art.codigo} vuelve a usar la portada automática.`, true);
+        }
+        ir("#/articulos");
+    },
+
     buscarCliente(d) { ir(`#/cliente?codigo=${q(limpiar(d.codigo))}`); },
     buscarRentar(d) { ir(`#/rentar?cliente=${q(limpiar(d.cliente))}`); },
 
@@ -401,7 +449,7 @@ const acciones = {
 
 const pantallas = {
     "/inicio": pantallaInicio, "/clientes": pantallaClientes, "/cliente": pantallaCliente,
-    "/articulos": pantallaArticulos, "/rentar": pantallaRentar, "/devolver": pantallaDevolver,
+    "/articulos": pantallaArticulos, "/catalogo": pantallaCatalogo, "/rentar": pantallaRentar, "/devolver": pantallaDevolver,
     "/premios": pantallaPremios, "/sistema": pantallaSistema
 };
 
