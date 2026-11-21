@@ -267,7 +267,7 @@ class FilmMagic {
         this.registrarCliente(new Cliente("001-0000004-4", "Luis Peña", "849-555-0104", "Av. Lincoln #88, Santo Domingo", "C004"));
         this.registrarCliente(new Cliente("001-0000005-5", "Carla Núñez", "809-555-0105", "C/ Mella #3, San Cristóbal", "C005"));
 
-        this.registrarArticulo(new Video("V001", "El Padrino", 150));
+        this.registrarArticulo(new Video("V001", "El Padrino", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJpsXZEIrq7w8bSex2tJ0r7C5vjYLJt0dZGP-OCWzAug&s=10"));
         this.registrarArticulo(new Video("V002", "Titanic", 150));
         this.registrarArticulo(new Video("V003", "Matrix", 150));
         this.registrarArticulo(new VideoJuego("J001", "FIFA 24", 300));
