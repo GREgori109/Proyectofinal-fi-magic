@@ -268,20 +268,20 @@ class FilmMagic {
         this.registrarCliente(new Cliente("001-0000005-5", "Carla Núñez", "809-555-0105", "C/ Mella #3, San Cristóbal", "C005"));
 
         this.registrarArticulo(new Video("V001", "El Padrino", 150, true, "https://i.ebayimg.com/00/s/MTYwMFgxMDY2/z/ioUAAOSw6Btj8lJA/$_57.JPG?set_id=880000500F"));
-        this.registrarArticulo(new Video("V002", "Titanic", 150));
-        this.registrarArticulo(new Video("V003", "Matrix", 150));
-        this.registrarArticulo(new VideoJuego("J001", "FIFA 24", 300));
-        this.registrarArticulo(new VideoJuego("J002", "Zelda Breath of the Wild", 300));
-        this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250));
-        this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250));
-        this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250));
+        this.registrarArticulo(new Video("V002", "Titanic", 150, true, "https://www.google.com/imgres?q=tiktanic%20poster&imgurl=https%3A%2F%2Fi.ebayimg.com%2Fimages%2Fg%2FgnEAAOSwP~tW4HMS%2Fs-l1200.jpg&imgrefurl=https%3A%2F%2Fwww.ebay.com%2Fitm%2F333567167848&docid=pKPDYwROb64NIM&tbnid=vqwSiiBV7gljeM&vet=12ahUKEwjAlonY7peYAxV4LtAFHT1cBvYQnPAOegQINhAA..i&w=728&h=1050&hcb=2&ved=2ahUKEwjAlonY7peYAxV4LtAFHT1cBvYQnPAOegQINhAA"));
+        this.registrarArticulo(new Video("V003", "Matrix", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPFAKeaPH-V-tjN-Uxj3vh0fYQOdeGcIUvabX66GumhA&s=10"));
+        this.registrarArticulo(new VideoJuego("J001", "FIFA 24", 300, true, "https://www.elcorteingles.es/contenidos/universo-gaming/ea-sports-fc-24-nuevo-fifa/"));
+        this.registrarArticulo(new VideoJuego("J002", "Zelda Breath of the Wild", 300, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuaikpqT1ZniAQSbSwTgvM_6ggog2X3D_xso32n0N20Q&s"));
+        this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7utyn-0UlzzlqJShzZi1wtg58UiZ0_xy-TXeTH_iKaw&s=10"));
+        this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSI7DlVXMrSyUyHnW-UBvGOEQHLLb-9fPRT4xN54GWbg&s=10"));
+        this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq_EznQNEolMOCZ-T-FBlV70kem2Bph7zvq24qbIh5OA&s=10"));
         // Más títulos para el catálogo (sin historial de rentas)
-        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150));
-        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150));
-        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175));
-        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100));
+        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwo6Kc0DVop0GGlfOz7jwsBwF54cYLfKvkh_m0Tfe91Q&s=10"));
+        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyEN6ARlwy8k5xqH8Lz5LyqA_Q6mxot_dF7GuyK_cKQQ&s=10"));
+        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROx7RH4DFS2dI3UHIoIwXBQI2FpzWpBbA9Z3Gm-PJFcA&s"));
+        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZsAyAbQElUKFSpFEh4GAjrPKcfzjid7FnLv_-bORH9A&s=10"));
         this.registrarArticulo(new Video("V005", "Joker", 100, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRonyllm4tHPRwvQqkIrjS0caHK5tJKK9I20hHw8mL0RAkrhJRjBhc0nGk&s=10"));
-        this.registrarArticulo(new Video("V006", "Interstelar", 100));
+        this.registrarArticulo(new Video("V006", "Interstelar", 100,true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2hN-xE6GehHYlWwHMvvylYXQTyAq54hImVhDzlVjlYQ&s=10"));
 
         const anio = this.#fechaSistema.slice(0, 4);
         const inicio = `${anio}-01-02`;
