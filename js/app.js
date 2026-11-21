@@ -147,7 +147,7 @@ function pantallaCliente(params) {
 }
 
 function pantallaArticulos() {
-    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
+    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" data-respaldo="${esc(Articulo.ilustracion(a.claveTipo))}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
         <td>${dinero(a.precioRenta)}</td><td>${a.diasRenta}</td><td>${dinero(a.tarifaAtrasoDiaria)}</td>
         <td>${a.disponible ? '<span class="pill verde">Disponible</span>' : '<span class="pill amarillo">Rentado</span>'}</td></tr>`).join("");
     return pagina("Artículos", "/articulos", `
@@ -184,6 +184,13 @@ function aplicarFiltro() {
         t.classList.toggle("oculto", !coincide);
     });
 }
+/** Si la imagen de un link no carga, se muestra la portada automática en su lugar. */
+document.addEventListener("error", (e) => {
+    const img = e.target;
+    if (img.tagName === "IMG" && img.dataset.respaldo && img.src !== img.dataset.respaldo) {
+        img.src = img.dataset.respaldo;
+    }
+}, true);
 document.addEventListener("input", (e) => { if (e.target.id === "buscar") { aplicarFiltro(); } });
 document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-filtro]");
@@ -198,7 +205,7 @@ document.addEventListener("click", (e) => {
 /** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
 function catalogo(codigoCliente) {
     const tarjetas = sistema.articulos.map(a => `<div class="item${a.disponible ? "" : " ocupada"}" data-titulo="${esc(a.titulo.toLowerCase())}" data-cat="${esc(a.categoria)}">
-        <img src="${esc(a.portada)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+        <img src="${esc(a.portada)}" data-respaldo="${esc(a.portadaAuto)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
         <strong>${esc(a.titulo)}</strong>
         <small>${esc(a.categoria)} · ${esc(a.codigo)}</small>
         <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>

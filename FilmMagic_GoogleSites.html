@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
   Nombre del Autor: Jose Gregorio Molina Ozuna
   Matrícula: PENDIENTE
@@ -11,7 +12,6 @@
   pegarse en Google Sites: Insertar > Insertar código > pestaña "Incorporar".
   El código es el mismo de index.html, css/estilos.css y js/*.js.
 -->
-<!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Film Magic – Sistema de rentas</title>
 <style>
@@ -376,6 +376,9 @@ class Articulo {
 
     /** Categoría para el catálogo: las películas por un lado y los videojuegos (disco o cinta) por otro. */
     get categoria() { return this.claveTipo === "VIDEO" ? "Película" : "Videojuego"; }
+
+    /** Portada automática (se usa si la imagen del link no carga). */
+    get portadaAuto() { return Articulo.portadaGenerada(this.#titulo, this.categoria, this.claveTipo); }
 
     /** Portada para las tarjetas: la imagen del artículo o una portada generada con el título (SVG, no pesa). */
     get portada() {
@@ -888,21 +891,21 @@ class FilmMagic {
         this.registrarCliente(new Cliente("001-0000004-4", "Luis Peña", "849-555-0104", "Av. Lincoln #88, Santo Domingo", "C004"));
         this.registrarCliente(new Cliente("001-0000005-5", "Carla Núñez", "809-555-0105", "C/ Mella #3, San Cristóbal", "C005"));
 
-        this.registrarArticulo(new Video("V001", "El Padrino", 150));
-        this.registrarArticulo(new Video("V002", "Titanic", 150));
-        this.registrarArticulo(new Video("V003", "Matrix", 150));
-        this.registrarArticulo(new VideoJuego("J001", "FIFA 24", 300));
-        this.registrarArticulo(new VideoJuego("J002", "Zelda Breath of the Wild", 300));
-        this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250));
-        this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250));
-        this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250));
+        this.registrarArticulo(new Video("V001", "El Padrino", 150, true, "https://i.ebayimg.com/00/s/MTYwMFgxMDY2/z/ioUAAOSw6Btj8lJA/$_57.JPG?set_id=880000500F"));
+        this.registrarArticulo(new Video("V002", "Titanic", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRErvzi-28e-p5B_jrBUhoStBmYgUg2OliDZzZ8BmC_yA&s=10"));
+        this.registrarArticulo(new Video("V003", "Matrix", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPFAKeaPH-V-tjN-Uxj3vh0fYQOdeGcIUvabX66GumhA&s=10"));
+        this.registrarArticulo(new VideoJuego("J001", "FIFA 24", 300, true, "https://i.pinimg.com/736x/b1/fa/a2/b1faa25f8499f1edb5353e3109b91ad3.jpg"));
+        this.registrarArticulo(new VideoJuego("J002", "Zelda Breath of the Wild", 300, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuaikpqT1ZniAQSbSwTgvM_6ggog2X3D_xso32n0N20Q&s"));
+        this.registrarArticulo(new CintaVideoJuego("T001", "Super Mario Bros", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7utyn-0UlzzlqJShzZi1wtg58UiZ0_xy-TXeTH_iKaw&s=10"));
+        this.registrarArticulo(new CintaVideoJuego("T002", "Sonic 2", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSI7DlVXMrSyUyHnW-UBvGOEQHLLb-9fPRT4xN54GWbg&s=10"));
+        this.registrarArticulo(new CintaVideoJuego("T003", "Mortal Kombat", 250, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq_EznQNEolMOCZ-T-FBlV70kem2Bph7zvq24qbIh5OA&s=10"));
         // Más títulos para el catálogo (sin historial de rentas)
-        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150));
-        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150));
-        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175));
-        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100));
-        this.registrarArticulo(new Video("V005", "Joker", 100));
-        this.registrarArticulo(new Video("V006", "Interstelar", 100));
+        this.registrarArticulo(new VideoJuego("J003", "Spider-Man: Miles Morales", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwo6Kc0DVop0GGlfOz7jwsBwF54cYLfKvkh_m0Tfe91Q&s=10"));
+        this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyEN6ARlwy8k5xqH8Lz5LyqA_Q6mxot_dF7GuyK_cKQQ&s=10"));
+        this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROx7RH4DFS2dI3UHIoIwXBQI2FpzWpBbA9Z3Gm-PJFcA&s"));
+        this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZsAyAbQElUKFSpFEh4GAjrPKcfzjid7FnLv_-bORH9A&s=10"));
+        this.registrarArticulo(new Video("V005", "Joker", 100, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRonyllm4tHPRwvQqkIrjS0caHK5tJKK9I20hHw8mL0RAkrhJRjBhc0nGk&s=10"));
+        this.registrarArticulo(new Video("V006", "Interstelar", 100,true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2hN-xE6GehHYlWwHMvvylYXQTyAq54hImVhDzlVjlYQ&s=10"));
 
         const anio = this.#fechaSistema.slice(0, 4);
         const inicio = `${anio}-01-02`;
@@ -1059,7 +1062,7 @@ function pantallaCliente(params) {
 }
 
 function pantallaArticulos() {
-    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
+    const filas = sistema.articulos.map(a => `<tr><td><img class="portada" src="${esc(a.imagenMostrar)}" data-respaldo="${esc(Articulo.ilustracion(a.claveTipo))}" alt="Portada de ${esc(a.titulo)}" loading="lazy"></td><td>${esc(a.codigo)}</td><td>${esc(a.tipo)}</td><td>${esc(a.titulo)}</td>
         <td>${dinero(a.precioRenta)}</td><td>${a.diasRenta}</td><td>${dinero(a.tarifaAtrasoDiaria)}</td>
         <td>${a.disponible ? '<span class="pill verde">Disponible</span>' : '<span class="pill amarillo">Rentado</span>'}</td></tr>`).join("");
     return pagina("Artículos", "/articulos", `
@@ -1096,6 +1099,13 @@ function aplicarFiltro() {
         t.classList.toggle("oculto", !coincide);
     });
 }
+/** Si la imagen de un link no carga, se muestra la portada automática en su lugar. */
+document.addEventListener("error", (e) => {
+    const img = e.target;
+    if (img.tagName === "IMG" && img.dataset.respaldo && img.src !== img.dataset.respaldo) {
+        img.src = img.dataset.respaldo;
+    }
+}, true);
 document.addEventListener("input", (e) => { if (e.target.id === "buscar") { aplicarFiltro(); } });
 document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-filtro]");
@@ -1110,7 +1120,7 @@ document.addEventListener("click", (e) => {
 /** Catálogo visual: tarjetas con imagen, título, precio y estado. Si hay cliente sin deuda, cada tarjeta permite elegirla. */
 function catalogo(codigoCliente) {
     const tarjetas = sistema.articulos.map(a => `<div class="item${a.disponible ? "" : " ocupada"}" data-titulo="${esc(a.titulo.toLowerCase())}" data-cat="${esc(a.categoria)}">
-        <img src="${esc(a.portada)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
+        <img src="${esc(a.portada)}" data-respaldo="${esc(a.portadaAuto)}" alt="Portada de ${esc(a.titulo)}" loading="lazy">
         <strong>${esc(a.titulo)}</strong>
         <small>${esc(a.categoria)} · ${esc(a.codigo)}</small>
         <span>${dinero(a.precioRenta)} · ${a.diasRenta} días</span>

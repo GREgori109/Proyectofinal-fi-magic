@@ -111,6 +111,9 @@ class Articulo {
     /** Categoría para el catálogo: las películas por un lado y los videojuegos (disco o cinta) por otro. */
     get categoria() { return this.claveTipo === "VIDEO" ? "Película" : "Videojuego"; }
 
+    /** Portada automática (se usa si la imagen del link no carga). */
+    get portadaAuto() { return Articulo.portadaGenerada(this.#titulo, this.categoria, this.claveTipo); }
+
     /** Portada para las tarjetas: la imagen del artículo o una portada generada con el título (SVG, no pesa). */
     get portada() {
         return this.#imagen || Articulo.portadaGenerada(this.#titulo, this.categoria, this.claveTipo);
