@@ -280,7 +280,7 @@ class FilmMagic {
         this.registrarArticulo(new VideoJuego("J004", "The Last of Us Part II", 150));
         this.registrarArticulo(new VideoJuego("J005", "God of War Ragnarök", 175));
         this.registrarArticulo(new Video("V004", "Avatar: El camino del agua", 100));
-        this.registrarArticulo(new Video("V005", "Joker", 100));
+        this.registrarArticulo(new Video("V005", "Joker", 100, true, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRonyllm4tHPRwvQqkIrjS0caHK5tJKK9I20hHw8mL0RAkrhJRjBhc0nGk&s=10"));
         this.registrarArticulo(new Video("V006", "Interstelar", 100));
 
         const anio = this.#fechaSistema.slice(0, 4);
