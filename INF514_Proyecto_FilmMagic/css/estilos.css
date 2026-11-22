@@ -1,0 +1,261 @@
+/* Nombre del Autor: Jose Gregorio Molina Ozuna
+   Matrícula: 100706992
+   Asignatura: Programación
+   Sección: 7 (INF514-7)
+   Fecha de Entrega: 27 de noviembre de 2026
+   Hora de Entrega: 2:17 p. m. (hora límite)
+   Profesor: Julio Castro Ortiz */
+
+/* Estilos de la aplicación Film Magic */
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:#f1f5f9;
+  color:#1f2937;
+}
+header{
+  background:#1e3a8a;
+  color:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 28px;
+}
+.marca{
+  font-size:22px;
+  font-weight:700;
+}
+.marca small{
+  font-weight:400;
+  font-size:13px;
+  opacity:.8;
+  margin-left:8px;
+}
+nav{
+  background:#172554;
+  display:flex;
+  flex-wrap:wrap;
+  padding:0 20px;
+}
+nav a{
+  color:#cbd5e1;
+  text-decoration:none;
+  padding:12px 16px;
+  font-size:15px;
+}
+nav a:hover{
+  background:#1e3a8a;
+  color:#fff;
+}
+nav a.activo{
+  background:#f1f5f9;
+  color:#1e3a8a;
+  font-weight:700;
+}
+main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:22px 20px 40px;
+}
+h1{
+  margin:0 0 16px;
+  color:#1e3a8a;
+  font-size:26px;
+}
+h2{
+  margin:0 0 12px;
+  font-size:18px;
+  color:#1e3a8a;
+}
+.panel{
+  background:#fff;
+  border-radius:10px;
+  padding:18px 20px;
+  margin-bottom:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+}
+.dos{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.dos .panel{
+  margin-bottom:0;
+}
+@media(max-width:800px){
+  .dos{
+  grid-template-columns:1fr;
+}
+}
+.tarjetas{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin-bottom:16px;
+}
+.tarjeta{
+  background:#fff;
+  border-radius:10px;
+  padding:16px;
+  text-align:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+}
+.tarjeta b{
+  display:block;
+  font-size:30px;
+  color:#1e3a8a;
+}
+.tarjeta span{
+  color:#6b7280;
+  font-size:14px;
+}
+.accesos{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.btn{
+  display:inline-block;
+  background:#1e3a8a;
+  color:#fff;
+  border:0;
+  border-radius:7px;
+  padding:10px 18px;
+  font-size:15px;
+  cursor:pointer;
+  text-decoration:none;
+}
+.btn:hover{
+  background:#1d4ed8;
+}
+.btn.sec{
+  background:#e0e7ff;
+  color:#1e3a8a;
+}
+.btn.peq{
+  padding:6px 12px;
+  font-size:13px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th{
+  background:#eff6ff;
+  color:#1e3a8a;
+  text-align:left;
+}
+th,td{
+  padding:9px 10px;
+  border-bottom:1px solid #e5e7eb;
+}
+form.fila{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:flex-end;
+}
+label{
+  display:flex;
+  flex-direction:column;
+  font-size:13px;
+  color:#4b5563;
+  gap:4px;
+}
+input,select{
+  padding:9px 10px;
+  border:1px solid #cbd5e1;
+  border-radius:6px;
+  font-size:15px;
+  min-width:170px;
+}
+.pill{
+  padding:3px 10px;
+  border-radius:99px;
+  font-size:12px;
+  font-weight:600;
+}
+.verde{
+  background:#dcfce7;
+  color:#166534;
+}
+.rojo{
+  background:#fee2e2;
+  color:#991b1b;
+}
+.amarillo{
+  background:#fef3c7;
+  color:#92400e;
+}
+.msg{
+  padding:12px 16px;
+  border-radius:8px;
+  margin-bottom:16px;
+  font-size:15px;
+}
+.msg.ok{
+  background:#dcfce7;
+  color:#166534;
+  border:1px solid #86efac;
+}
+.msg.error{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #fca5a5;
+}
+.datos{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:12px;
+}
+.datos span{
+  display:block;
+  font-size:12px;
+  color:#6b7280;
+}
+.datos b{
+  font-size:15px;
+}
+.aviso{
+  border-left:6px solid #dc2626;
+}
+.nota{
+  color:#6b7280;
+  font-size:13px;
+  margin:0 0 10px;
+}
+pre.carta{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  padding:18px;
+  border-radius:8px;
+  white-space:pre-wrap;
+  font-family:Georgia,serif;
+  font-size:15px;
+}
+footer{
+  text-align:center;
+  color:#6b7280;
+  font-size:12px;
+  padding:16px;
+}
+small{
+  color:#6b7280;
+  font-weight:400;
+}
+
+.portada { width: 44px; height: 40px; object-fit: cover; border-radius: 6px; display: block; }
+
+.catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.item { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
+.item img { width: 100%; border-radius: 8px; aspect-ratio: 160 / 220; object-fit: cover; }
+.item small { color: #64748b; }
+.item.ocupada { opacity: .65; }
+.item.oculto { display: none; }
+.filtros { display: flex; gap: 8px; margin-top: 10px; }
+.btn.activo { background: #1e3a8a; color: #fff; }
+#buscar { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }

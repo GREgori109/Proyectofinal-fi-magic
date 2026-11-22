@@ -1,0 +1,42 @@
+PROYECTO FINAL - FILM MAGIC (Caso 1) - INF514 Lenguaje de Programacion II
+Autor: Jose Gregorio Molina Ozuna | Matricula: 100706992 | Profesor: Julio Castro Ortiz
+Entrega: INF514_JM_100706992_PF.zip
+
+Esta entrega combina dos partes que resuelven el mismo caso con las mismas clases:
+  1) APLICACION WEB en HTML, CSS y JavaScript (entrega principal, autorizada por el profesor).
+  2) VERSION JAVA (.java + .jar) en la carpeta java/, con un servidor web que muestra la interfaz en HTML.
+
+Contenido:
+  index.html                         Pagina principal de la aplicacion web (abrir este archivo)
+  css/estilos.css                    Diseno
+  js/modelo.js                       Clases: Articulo (abstracta), Video, VideoJuego, CintaVideoJuego, Cliente, Renta, Premio
+  js/sistema.js                      FilmMagic (logica del negocio) y Almacen (localStorage)
+  js/app.js                          Pantallas, formularios y navegacion
+  FilmMagic_GoogleSites.html         Version de un solo archivo para pegar en Google Sites
+  java/src/*.java                    Codigo fuente Java (con el encabezado obligatorio)
+  java/FilmMagic.jar                 Ejecutable Java
+  java/EJECUTAR.txt                  Como compilar y ejecutar la version Java
+  capturas/                          Capturas de la aplicacion web (y capturas/java/ de la compilacion Java)
+  Informe_Proyecto_Final.pdf         Informe segun el esquema del proyecto
+  Presentacion_Proyecto_Final.pptx   Presentacion
+
+Como ejecutar la aplicacion web:
+  1) Descomprimir el ZIP.
+  2) Doble clic en index.html (Chrome, Edge o Firefox). No requiere instalar nada.
+  3) Primer uso: "Fecha y datos" > "Cargar datos de demostracion".
+     Para probar un atraso: cambiar la fecha del sistema a varios dias despues de una renta y devolver el articulo.
+  Pagina publicada: https://gregori109.github.io/Proyectofinal-fi-magic/
+
+Como ejecutar la version Java (necesita JDK 17+), desde la carpeta java/:
+  java -jar FilmMagic.jar     y abrir http://localhost:8080
+  (detalles y compilacion en java/EJECUTAR.txt)
+
+Equivalencias con la consigna:
+  Codigo fuente (.java)                 -> java/src/*.java y, en la version web, index.html + css/ + js/ (todos con encabezado)
+  Codigo ejecutable (.jar / .class)     -> java/FilmMagic.jar (version Java) / index.html (version web, no se compila)
+  Capturas de compilacion y ejecucion   -> capturas/java/ (compilacion) y capturas/ (ejecucion de la aplicacion)
+  Informe PDF segun el esquema          -> Informe_Proyecto_Final.pdf
+  Presentacion                          -> Presentacion_Proyecto_Final.pptx
+
+Google Sites (opcional): Insertar > Insertar codigo > "Incorporar codigo" > pegar todo FilmMagic_GoogleSites.html > Siguiente > Insertar > Publicar.
+Los datos de la version web se guardan en el navegador (localStorage); en Google Sites puede que se bloquee y duren solo mientras la pagina este abierta.

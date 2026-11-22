@@ -1,0 +1,23 @@
+VERSION JAVA (combinacion .java + HTML) - FILM MAGIC - INF514
+Autor: Jose Gregorio Molina Ozuna | Matricula: 100706992 | Profesor: Julio Castro Ortiz
+
+Que es: el mismo caso resuelto con clases en Java (Articulo abstracta, Video, VideoJuego,
+CintaVideoJuego, Cliente, Renta, Premio, Almacen y FilmMagic). La clase ServidorWeb usa el servidor
+HTTP del JDK y muestra la interfaz en el navegador: la logica corre en Java y la pantalla es HTML.
+
+Requisito: JDK 17 o superior (java -version).
+
+Ejecutar sin compilar (usa el .jar incluido), desde esta carpeta (java/):
+    java -jar FilmMagic.jar
+  y abrir en el navegador:  http://localhost:8080
+  (otro puerto: java -jar FilmMagic.jar 9090)
+
+Compilar desde el codigo fuente (opcional):
+  PowerShell:  javac -encoding UTF-8 -d build (Get-ChildItem src\*.java).FullName
+  CMD/Linux:   javac -encoding UTF-8 -d build src/*.java
+  Luego:       java -cp build ServidorWeb
+
+Version de consola (menu en la terminal):  java -cp build Main
+
+Los datos y las cartas se guardan en las carpetas datos/ y cartas/ que se crean junto al programa.
+Para detener el servidor: Ctrl+C.
